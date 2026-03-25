@@ -9,7 +9,6 @@ qc.draw(output="mpl" , filename="./sampler.png")
 
 
 from qiskit.primitives import StatevectorSampler
-
 qc_measure = qc.measure_all(inplace = False)
 sampler = StatevectorSampler()
 job = sampler.run([qc_measure] , shots= 1000)

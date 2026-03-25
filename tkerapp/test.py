@@ -126,16 +126,17 @@ def animate_transition(state1, state2, steps=25):
 
 def apply_gate(gate_name):
     global qc, states
-
+# go thourh vector x to state
     if gate_name == "x":
         qc.x(0)
+# go thourh vector y to state
     elif gate_name == "y":
         qc.y(0)
     elif gate_name == "z":
         qc.z(0)
     elif gate_name == "h":
         qc.h(0)
-
+# 90' with vector x , y
     elif gate_name == "rx":
         qc.rx(pi/2, 0)
     elif gate_name == "ry":
