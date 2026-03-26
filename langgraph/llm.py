@@ -4,7 +4,6 @@ from langchain_community.chat_models import ChatOllama
 from langgraph.graph import StateGraph , START , END  
 from dotenv import load_dotenv 
 
-load_dotenv()
 
 class AgentState(TypedDict) : 
     messages : List[HumanMessage]
