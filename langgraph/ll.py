@@ -11,35 +11,35 @@ class AgentState(TypedDict) :
 
 llm = ChatOllama(model = "llama3")
 
-def process(state : AgentState) -> AgentState :
+def process(state: AgentState) -> AgentState : 
     response = llm.invoke(state["messages"])
     state["messages"].append(AIMessage(content=response.content))
-    print(f"\n AI :  {response.content}" )
-
-    return state 
+    print(f"\n AI: {response.content}" )
+    return state
 
 graph = StateGraph(AgentState)
 graph.add_node("process_node" , process)
 graph.add_edge(START , "process_node")
-graph.add_edge("process_node" ,END)
+graph.add_edge("process_node" , END )
 agent = graph.compile()
 
 conversation_history = []
-user_input = input("Enter :")
+user_input = input("Enter : ")
 
-while user_input != "exit" :
+while user_input != "exit" : 
     conversation_history.append(HumanMessage(content=user_input))
     result = agent.invoke({"messages" : conversation_history})
     conversation_history = result["messages"]
 
-    user_input = input("Enter :")
-with open("logging.txt" , "w") as file :
-    file.write("Chat log")
-    for messages in conversation_history :
-        if isinstance(messages , HumanMessage) : 
-            file.write(f"You : {messages.content} \n")
-        elif isinstance(messages , AIMessage) : 
-            file.write(f"AI : {messages.content} \n \n")
-    file.write("END")
+    user_input = input("Enter : ")
 
-print("conversation loggin.txt")
+with open("longging.txt" , "w") as file :
+    file.write("Chat history ")
+    for messages in conversation_history : 
+        if isinstance(messages , HumanMessage) : 
+            file.write(f"You : {messages.content} \n" )
+        elif isinstance(messages , AIMessage) : 
+            file.write(f"AI : {messages.content} \n \n " )
+    file.write("End")
+
+print("kaka")
