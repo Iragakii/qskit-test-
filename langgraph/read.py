@@ -35,7 +35,7 @@ def read_file(path : str) -> str:
         with open(path , "r" , encoding ="utf-8") as f:
             content = f.read()
         if len(content) > MAX_FILE_SIZE:
-            content = content(:MAX_FILE_SIZE) + "\n...truncated"
+            content = content[:MAX_FILE_SIZE] + "\n...truncated"
         return content
     except Exception as e:
         return f"[Error Read : {path}] : {e}"
@@ -48,3 +48,23 @@ def get_all_files(folder : str) -> str:
                 files.append(os.path.join(root, name))
     return files
 
+users_input = input("Enter :")
+
+while users_input != "exit":
+    conversation_history.append(HumanMessage(content = users_input))
+    result = agent.invoke({"messages" : conversation_history})
+    conversation_history = result["messages"]
+    
+    users_input = input("Enter :")
+
+with open("longging.txt" , "w") as file:
+    file.write("Chat History")
+    
+    for messages in conversation_history:
+        if isinstance(messages, HumanMessage):
+            file.write(f"You : {messages.content} \n")
+        if isinstance(messages , AIMessage):
+            file.write(f"AI : {messages.content} \n \n ")
+
+        file.write("End Chat")
+print("KAKA")
