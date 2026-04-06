@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage , AIMessage
 from langchain_community.chat_models import ChatOllama
 from langgraph.graph import StateGraph , START , END 
 
-SUPPORT_EXT = (".jsx" , ".tsx" , ".js" , ".pdf" , ".md" , ".html" , ".css")  
+SUPPORT_EXT = (".jsx" , ".tsx" , ".js" , ".pdf" , ".md" , ".html" , ".css" , ".py")  
 MAX_FILE_SIZE = 4000
 MAX_TOLTAL_SIZE = 12000
 
@@ -72,14 +72,40 @@ def load_folder(folder : str) -> str:
     print(f"\n Found Folder {len(files)} files")
     return load_multiple_files(folder)
 
+
+
+
 def hanlde_input(user_input : str) -> str:
     user_input = user_input.strip()
 
-    for "," in user_input:
+    if "," in user_input:
         paths = [p.strip() for p in user_input.split(",")]
+        #parse loai bo spacing  split w ,
         return load_multiple_files(paths)
-    if os.path.isdir(user_input) 
+    if os.path.isdir(user_input) :
         return load_folder(user_input)
+    
     if os.path.isfile(user_input) and user_input.endswith(SUPPORT_EXT):
         return load_multiple_files([user_input])
+     # tra ve user_input text sigle file 
     return user_input
+
+users_input = input("Enter :")
+
+while users_input != "exit" : 
+    processed_input = hanlde_input(users_input)
+
+    if os.path.exists(users_input) or "," in users_input:
+        messages_content =  f"""
+You are an AI codebase assistant.
+
+Analyze the following codebase context and answer the user:
+
+{processed_input}
+"""
+    else : 
+        messages_content = processed_input
+        conversation_history.append(HumanMessage(content= messages_content))
+        result = agent.invoke({"messages" : conversation_history})
+        conversation_history = result["messages"]
+        users_input = input("Enter : ")
