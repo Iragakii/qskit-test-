@@ -4,27 +4,26 @@ from langchain_core.messages import HumanMessage , AIMessage
 from langchain_community.chat_models import ChatOllama
 from langgraph.graph import StateGraph , START , END 
 
-
-SUPPORT_EXT = (".jsx" , ".js" , ".tsx" , ".html" , ".css" , ".pdf" , ".md")
+SUPPORT_EXT = (".jsx" , ".tsx" , ".js" , ".pdf" , ".md" , ".html" , ".css")  
 MAX_FILE_SIZE = 4000
 MAX_TOLTAL_SIZE = 12000
 
 class AgentState(TypedDict):
     messages : List[Union[HumanMessage , AIMessage]]
 
-llm = ChatOllama("llama3")
+llm = ChatOllama(model = "llama3")
 
-def process(state:AgentState) -> AgentState:
+def process(state : AgentState) -> AgentState :
     response = llm.invoke(state["messages"])
     state["messages"].append(AIMessage(content = response.content))
+    print(f"\n AI : {response.content}")
 
-    print(f"\n AI: {response.content}")
     return state
 
 graph = StateGraph(AgentState)
-graph.add_node("process_node" , process)
+graph.add_node("process_node" , process) 
 graph.add_edge(START , "process_node")
-graph.add_edge("process_node" , END)
+graph.add_edge("process__node" , END)
 
 agent = graph.compile()
 
@@ -32,39 +31,40 @@ conversation_history = []
 
 def read_file(path : str) -> str:
     try : 
-        with open(path , "r" , encoding ="utf-8") as f:
+        with open(path , "r" , encoding = "utf-8") as f:
             content = f.read()
         if len(content) > MAX_FILE_SIZE:
-            content = content[:MAX_FILE_SIZE] + "\n...truncated"
+            content = content[:MAX_FILE_SIZE] + "\n....truncated"
         return content
-    except Exception as e:
-        return f"[Error Read : {path}] : {e}"
+    except Exception as e : 
+        return f"[Error read : {path}] : {e}"
 
-def get_all_files(folder : str) -> str:
+def get_all_files(folder : str) -> List[str]:
     files = []
     for root , _ , filesname in os.walk(folder):
-        for name in filesname:
-            if name.endswith(SUPPORT_EXT):
-                files.append(os.path.join(root, name))
-    return files
+        for name in filesname : 
+            if name.endswitch(SUPPORT_EXT):
+                files.append(os.path.join(root , name))
+    return files 
 
-users_input = input("Enter :")
+users_input = input("Enter")
 
-while users_input != "exit":
+while users_input !="exit" :
     conversation_history.append(HumanMessage(content = users_input))
     result = agent.invoke({"messages" : conversation_history})
     conversation_history = result["messages"]
     
     users_input = input("Enter :")
 
-with open("longging.txt" , "w") as file:
-    file.write("Chat History")
-    
-    for messages in conversation_history:
-        if isinstance(messages, HumanMessage):
-            file.write(f"You : {messages.content} \n")
-        if isinstance(messages , AIMessage):
-            file.write(f"AI : {messages.content} \n \n ")
+with open("longging.txt" , "w") as file : 
+    file.write("Chat history")
 
-        file.write("End Chat")
-print("KAKA")
+    for messages in conversation_history:
+        if isinstance(messages  , HumanMessage):
+            file.write(f"You : {messages} \n")
+        if isinstance(messages , AIMessage):
+            file.write(f"AI : { messages.content} \n \n ")
+
+    file.write("end chat")
+
+print("kaka")
